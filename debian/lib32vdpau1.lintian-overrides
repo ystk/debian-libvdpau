@@ -1,0 +1,1 @@
+lib32vdpau1: non-dev-pkg-with-shlib-symlink usr/lib32/libvdpau.so.1.0.0 usr/lib32/libvdpau.so

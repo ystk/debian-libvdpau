@@ -1,0 +1,300 @@
+Description: Upstream changes introduced in version 0.4.1-2
+ This patch has been created by dpkg-source during the package build.
+ Here's the last changelog entry, hopefully it gives details on why
+ those changes were made:
+ .
+ libvdpau (0.4.1-2) unstable; urgency=high
+ .
+   * Provide an upload to unstable to fix build failure. (Closes: #603220)
+   * Set urgency to high so it enters testing ASAP.
+ .
+ The person named in the Author field signed this changelog entry.
+Author: Andres Mejia <mcitadel@gmail.com>
+Bug-Debian: http://bugs.debian.org/603220
+
+---
+The information above should follow the Patch Tagging Guidelines, please
+checkout http://dep.debian.net/deps/dep3/ to learn about the format. Here
+are templates for supplementary fields that you might want to add:
+
+Origin: <vendor|upstream|other>, <url of original patch>
+Bug: <url in upstream bugtracker>
+Bug-Debian: http://bugs.debian.org/<bugnumber>
+Bug-Ubuntu: https://launchpad.net/bugs/<bugnumber>
+Forwarded: <no|not-needed|url proving that it has been forwarded>
+Reviewed-By: <name and email of someone who approved the patch>
+Last-Update: <YYYY-MM-DD>
+
+--- /dev/null
++++ libvdpau-0.4.1/ChangeLog
+@@ -0,0 +1,270 @@
++commit 76fdf83a7690ce366edbd4816b3c4b6728eeb9ee
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Thu Jan 28 15:01:25 2010 -0800
++
++    Bump version to 0.4
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++
++commit 341c7e49b8c98f1a7b1a3ae719f15acd694719ca
++Author: Stephen Warren <swarren@nvidia.com>
++Date:   Thu Jan 28 15:00:32 2010 -0800
++
++    trace: Fix a picture info bracket mismatch.
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++
++commit f3bbd295d310d6ea44f00fa6c787a7427f01cd05
++Author: Stephen Warren <swarren@nvidia.com>
++Date:   Thu Jan 28 14:58:40 2010 -0800
++
++    YV12 documentation fix.
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++
++commit 4e2b6f38f640f341ec49336aaaccfb136decbdff
++Author: Stephen Warren <swarren@nvidia.com>
++Date:   Thu Jan 28 14:56:59 2010 -0800
++
++    Documentation enhancements for Uoti from ffmpeg.
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++
++commit 97331f1c8ee7c83f0dd6dff0ecc5bc51bf78022b
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Wed Jan 27 18:17:23 2010 -0800
++
++    Update the COPYING copyright date to include recent changes
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++
++commit 3c02e5c68ef9480a0f9e5c3af5b09e6b3dcd981d
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Wed Jan 27 18:16:41 2010 -0800
++
++    Query DRI2 for the driver name.
++    
++    If the VDPAU_DRIVER environment variable is not set, use DRI2Connect to query
++    the VDPAU driver name from the X server.
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++    Reviewed-by: Stephen Warren <swarren@nvidia.com>
++
++commit a9c69d294ae41fffadb432caa66917a4e7d107a8
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Mon Dec 14 10:52:41 2009 -0800
++
++    $(docdir) apparently requires autoconf 2.60
++
++commit 72c3ea0d5705ac5b21e5096742d9ec57573e543d
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Fri Nov 20 11:54:36 2009 -0800
++
++    Bump version to 0.3
++
++commit e864d59682b91bf9d596c2dadc657c932fae32e1
++Author: Stephen Warren <swarren@nvidia.com>
++Date:   Tue Nov 17 14:04:33 2009 -0800
++
++    Update VDPAU_VERSION and add VDPAU_INTERFACE_VERSION
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++
++commit 0537b13e292bc772e984872a3986e41fb51f9258
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Tue Nov 17 00:18:05 2009 -0800
++
++    Move VDPAU drivers into their own module directory.
++    
++    * Add a --with-module-dir configure parameter.
++    
++    * Pass the moduledir into the wrapper.  Use it to construct the path to search
++      for drivers.  Require drivers to end in a ".1" version, in case we ever want
++      to rev. the interface between the wrapper and the drivers.
++    
++    * If no driver is found in the new module dir, look for one in the default
++      search paths.  This is intended to find libvdpau_nvidia.so for drivers that
++      predate the change to move it, and can be removed in the future.
++    
++    * Stash the moduledir into vdpau.pc.  Drivers can find this with
++      `pkg-config --variable=moduledir vdpau`.
++    
++    * Add a version to libvdpau_trace.so in case the interface between it and
++      libvdpau.so ever changes.
++    
++    * Install libvdpau_trace.so.1 to moduledir instead of libdir.
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++    Acked-by: Stephen Warren <swarren@nvidia.com>
++
++commit f1f2b25e39b7092a94067f1c787a9b5c5c58bb5d
++Author: Stephen Warren <swarren@nvidia.com>
++Date:   Fri Oct 23 15:47:32 2009 -0700
++
++    Documentation updates.
++    
++    Signed-off-by: Stephen Warren <swarren@nvidia.com>
++    Reviewed-by: Aaron Plattner <aplattner@nvidia.com>
++
++commit cf794deacff4e9cec47d539a717d12c8865543ea
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Fri Oct 23 14:55:17 2009 -0700
++
++    Fix distcheck.
++    
++    * Uninstall the docs if they were installed.
++    * Remember to distribute Doxyfile and vdpau_data_flow.png in the
++      tarball.
++    
++    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
++    Reviewed-by: Stephen Warren <swarren@nvidia.com>
++
++commit fceec0aa07e4acb471e80c0ecb7a1d5724025874
++Author: Aaron Plattner <aaron@weasel.nvidia.com>
++Date:   Fri Sep 25 17:24:01 2009 -0700
++
++    Build documentation.
++    
++    Detect when doxygen, dot, and pdflatex are installed.  When they are, enable
++    documentation.  Add --enable-documentation and --disable-documentation to
++    override the autodetection.  Install the docs to the configured docdir (usually
++    $prefix/share/doc/libvdpau).
++
++commit 2af62b19ede3365a437225ae71a2d5ee203e7b47
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Thu Sep 17 11:33:00 2009 -0700
++
++    Use XORG_CHANGELOG to generate the changelog.
++    
++    Steal the XORG_CHANGELOG macro from X.Org and stash it in acinclude.m4.
++
++commit f13dd1050569359016a925dfd7a4af234ce68668
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Mon Sep 14 14:01:05 2009 -0700
++
++    Bump version to 0.2 for new features
++
++commit 46e791147ac43ecd2fbfbc6bdf3bebda9030b51e
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Fri Sep 4 12:27:12 2009 -0700
++
++    Updates for the NVIDIA 190.32 driver release.
++    
++    Add profiles for MPEG-4 part 2, DivX 4, and DivX 5.  Also add new high quality
++    scaling options.
++
++commit 50925e6b95aa9eaebd26c35f1f8f6af7acec4814
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Mon Aug 17 17:25:43 2009 -0700
++
++    Add a check for -ldl, stolen from xorg-server's configure.ac.
++    
++    Signed-off-by: Nicolas Chauvet <kwizart@gmail.com>
++
++commit 7fa59a29b65da47cbee52d92280306edda5ae317
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Wed Jul 8 16:16:48 2009 -0700
++
++    libvdpau_trace cleanups
++
++commit 240441a8a26cad8319170edd0d0d163bb6d6c3ff
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Wed Mar 25 10:08:11 2009 -0700
++
++    vdpau.h typo fix: "thread_1" should have been "thread_2"
++
++commit 48baffd9a00a02f3e4e3971133989127aeb9ce15
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Sun Mar 15 12:01:04 2009 -0700
++
++    VDPAU trace: Dump picture info for H.264 and VC-1
++
++commit 2fe18543d702b6be96fc547e286af0edce542fc6
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Sun Mar 15 12:00:22 2009 -0700
++
++    vdpau{,_x11}.h: Trailing whitespace removal
++
++commit 2fe9e460ee0e48101df5d50ab768b8c9225587e0
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Sun Mar 15 11:58:32 2009 -0700
++
++    vdpau.h: Document exact bitstream data requirements
++
++commit 9f2ccd388312649942c6b1f56b497b039541ceb2
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Sun Mar 15 11:52:26 2009 -0700
++
++    Trace VDP_VIDEO_MIXER_ATTRIBUTE_SKIP_CHROMA_DEINTERLACE
++    
++    I forgot to include this change in commit
++    1290f7c190e38f483b0203e932715a68b899e35c.
++
++commit 1290f7c190e38f483b0203e932715a68b899e35c
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Thu Mar 5 17:15:47 2009 -0800
++
++    Docs: Fix some VdpDecoderRender references that should have been VdpVideoMixerRender.
++
++commit 84eda285a526d31a81e7e082da0fde566c9353e0
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Wed Feb 18 09:13:35 2009 -0800
++
++    Add a "Skip chroma deinterlace" feature, improve VdpVideoMixer documentation.
++
++commit 1f9395341d09886a95a0d4fdad6c2a359c0d636d
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Sat Feb 14 15:16:29 2009 -0800
++
++    Print dlerror() when various libdl calls fail.
++    
++    Without printouts, it's impossible to tell why VDPAU initialization fails when
++    it can't open the backend or trace libraries or can't find various symbols.
++
++commit 3bd1c7efd002973e673fd88ef37c15ddd6e028ae
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Fri Feb 13 13:37:27 2009 -0800
++
++    Update VC-1 SP/MP range reduction documentation.
++
++commit 15cab0dd011633105cafa150366a4ef8e6dc8a1f
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Fri Feb 6 12:27:56 2009 -0800
++
++    Fix a typo in the VdpOutputSurfaceRenderBitmapSurface documentation.
++
++commit b9cf19db769d80652e57f7c6173e692e374942b0
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Wed Jan 14 10:46:35 2009 -0800
++
++    Add some authors
++
++commit d3906368d902d19acd8827d0e6b1b97c42be20ff
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Wed Jan 14 10:32:56 2009 -0800
++
++    Disable static libraries by default and remove version info from libvdpau_trace.
++
++commit d2e66e58f6588a90f3ea4c4e95a861704d640965
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Wed Jan 14 10:06:56 2009 -0800
++
++    Add a .gitignore.
++
++commit 094f3ab6be32623dd36356027ac067d5607a4d80
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Tue Jan 13 17:25:04 2009 -0800
++
++    Include the right headers.
++
++commit ae7d5d2425137cd3e7da338a80bdcad3f50f4ce7
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Tue Jan 13 16:58:45 2009 -0800
++
++    Add autoconf stuff.
++
++commit b11a35a13b478615d60fe1908665b8f4349aa780
++Author: Aaron Plattner <aplattner@nvidia.com>
++Date:   Tue Jan 13 16:18:44 2009 -0800
++
++    Initial commit.

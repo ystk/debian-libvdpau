@@ -1,0 +1,86 @@
+Source: libvdpau
+Section: libs
+Priority: optional
+Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
+Uploaders: Jean-Yves Avenard <jyavenard@gmail.com>,
+ Andres Mejia <mcitadel@gmail.com>, Russ Allbery <rra@debian.org>
+DM-Upload-Allowed: yes
+Build-Depends: debhelper (>= 7.0.50~), pkg-config, libx11-dev,
+ x11proto-dri2-dev (>= 2.2), libxext-dev,
+ g++-multilib [amd64], ia32-libs-dev [amd64],
+Build-Depends-Indep: doxygen, graphviz, texlive-base-bin | texlive-binaries,
+ texlive-base,
+Standards-Version: 3.9.1
+Homepage: http://cgit.freedesktop.org/~aplattner/libvdpau
+Vcs-Git: git://git.debian.org/git/pkg-nvidia/libvdpau.git
+Vcs-Browser: http://git.debian.org/?p=pkg-nvidia/libvdpau.git
+
+Package: libvdpau-dev
+Architecture: all
+Section: libdevel
+Depends: libvdpau1 (>= ${source:Version}),
+         libvdpau1 (<< ${source:Version}.1~),
+         libx11-dev,
+         ${misc:Depends}
+Replaces: nvidia-libvdpau-dev (<< 195.36.24-2)
+Conflicts: nvidia-libvdpau-dev (<< 195.36.24-2)
+Suggests: libvdpau-doc
+Description: Video Decode and Presentation API for Unix (development files)
+ VDPAU (Video Decode and Presentation API for Unix) is an open source
+ library (libvdpau) and API designed by NVIDIA originally for its GeForce
+ 8 series and later GPU hardware, targeted at the X Window System on Unix
+ operating-systems (including Linux, FreeBSD, and Solaris). This VDPAU API
+ allows video programs to offload portions of the video decoding process
+ and video post-processing to the GPU video-hardware.
+ .
+ This package contains the files necessary for development with VDPAU.
+
+Package: libvdpau1
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Replaces: nvidia-libvdpau, nvidia-libvdpau-ia32,
+ nvidia-libvdpau1 (<< 195.36.24-2), nvidia-libvdpau1-ia32 (<< 195.36.24-2)
+Conflicts: nvidia-libvdpau, nvidia-libvdpau-ia32,
+ nvidia-libvdpau1 (<< 195.36.24-2), nvidia-libvdpau1-ia32 (<< 195.36.24-2)
+Suggests: nvidia-vdpau-driver [amd64 i386]
+ | nvidia-vdpau-driver-ia32 [amd64]
+ | vdpau-driver
+Description: Video Decode and Presentation API for Unix (libraries)
+ VDPAU (Video Decode and Presentation API for Unix) is an open source
+ library (libvdpau) and API designed by NVIDIA originally for its GeForce
+ 8 series and later GPU hardware, targeted at the X Window System on Unix
+ operating-systems (including Linux, FreeBSD, and Solaris). This VDPAU API
+ allows video programs to offload portions of the video decoding process
+ and video post-processing to the GPU video-hardware.
+ .
+ This package contains the VDPAU wrapper and trace libraries.
+
+Package: lib32vdpau1
+Architecture: amd64
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Replaces: nvidia-libvdpau1-ia32 (<< 195.36.24-2)
+Conflicts: nvidia-libvdpau1-ia32 (<< 195.36.24-2)
+Suggests: nvidia-vdpau-driver-ia32 [amd64] | vdpau-driver-ia32
+Description: Video Decode and Presentation API for Unix (32-bit libraries)
+ VDPAU (Video Decode and Presentation API for Unix) is an open source
+ library (libvdpau) and API designed by NVIDIA originally for its GeForce
+ 8 series and later GPU hardware, targeted at the X Window System on Unix
+ operating-systems (including Linux, FreeBSD, and Solaris). This VDPAU API
+ allows video programs to offload portions of the video decoding process
+ and video post-processing to the GPU video-hardware.
+ .
+ This package contains the VDPAU wrapper and trace 32-bit libraries.
+
+Package: libvdpau-doc
+Architecture: all
+Section: doc
+Depends: ${misc:Depends}
+Description: Video Decode and Presentation API for Unix (documentation)
+ VDPAU (Video Decode and Presentation API for Unix) is an open source
+ library (libvdpau) and API designed by NVIDIA originally for its GeForce
+ 8 series and later GPU hardware, targeted at the X Window System on Unix
+ operating-systems (including Linux, FreeBSD, and Solaris). This VDPAU API
+ allows video programs to offload portions of the video decoding process
+ and video post-processing to the GPU video-hardware.
+ .
+ This package contains the VDPAU documentation.
