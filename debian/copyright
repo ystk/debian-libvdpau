@@ -1,7 +1,7 @@
-Format-Specification:
- http://svn.debian.org/wsvn/dep/web/deps/dep5.mdwn?op=file&rev=135
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: VDPAU wrapper and trace libraries
+Upstream-Contact: Aaron Plattner <aplattner@nvidia.com>
 Source: http://people.freedesktop.org/~aplattner/vdpau/
-Maintainer: Aaron Plattner <aplattner@nvidia.com>
 
 Files: *
 Copyright: © 2008-2010 NVIDIA Corporation
@@ -9,12 +9,12 @@ Copyright: © 2008-2010 NVIDIA Corporation
 License: Expat
 
 Files: debian/*
-Copyright: 2009, 2010 Andres Mejia <mcitadel@gmail.com>
-           2010 Andreas Beckmann <debian@abeckmann.de>
+Copyright: 2009-2012 Andres Mejia <mcitadel@gmail.com>
+           2010-2012 Andreas Beckmann <debian@abeckmann.de>
            2010 Russ Allbery <rra@debian.org>
 License: Expat
 
-Files: src/mesa_dri2.c, src/mesa_dri2.h
+Files: src/mesa_dri2.c src/mesa_dri2.h
 Copyright: © 2007,2008 Red Hat, Inc.
            © 2010 NVIDIA Corporation
 License: other

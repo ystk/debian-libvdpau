@@ -3,6 +3,7 @@
 #export DH_VERBOSE=1
 
 DEB_HOST_ARCH       ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+DEB_HOST_MULTIARCH  ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
 # Used to enable documentation if dependencies are available
 define cond_enable
@@ -14,44 +15,32 @@ endef
 CONFIGURE_OPTIONS ?= $(call cond_enable) \
 		     --enable-dri2
 
-32-ARCHS=amd64
-ifneq (,$(findstring $(DEB_HOST_ARCH), $(32-ARCHS)))
-EXTRA_CONFIGURE	+= configure32
-EXTRA_BUILD	+= build32
-EXTRA_INSTALL	+= install32
-endif
-
 %:
-	dh $@
+	dh $@ --with autoreconf
 
 binary: binary-indep binary-arch ;
 
-override_dh_auto_configure: $(EXTRA_CONFIGURE)
-	dh_testdir
-	./configure --prefix=/usr $(CONFIGURE_OPTIONS)
+override_dh_autoreconf:
+	dh_autoreconf --as-needed
 
-configure32:
+override_dh_auto_configure:
 	dh_testdir
-	mkdir debian/32
-	cd debian/32 && CC="$(CC) -m32" CXX="$(CXX) -m32" \
-		../../configure --prefix=/usr --libdir=/usr/lib32 \
+	LDFLAGS="-Wl,--as-needed $$(dpkg-buildflags --get LDFLAGS)" ./configure \
+		--prefix=/usr --sysconfdir=/etc --libdir=/usr/lib/$(DEB_HOST_MULTIARCH) \
 		$(CONFIGURE_OPTIONS)
 
-override_dh_auto_build: $(EXTRA_BUILD)
+override_dh_auto_build:
 	dh_auto_build
 
-build32:
-	dh_auto_build --sourcedirectory=debian/32
-
-override_dh_auto_install: $(EXTRA_INSTALL)
+override_dh_auto_install:
 	dh_auto_install
 
-install32:
-	dh_auto_install --sourcedirectory=debian/32
+override_dh_installdocs:
+	dh_installdocs -X.md5
 
-clean:
-	dh clean
-	rm -rf debian/32
+# ignore the plugin
+override_dh_makeshlibs:
+	dh_makeshlibs -Xvdpau/libvdpau_trace.so.1
 
 get-orig-source:
 	$(dir $_)libvdpau-get-orig-source
