@@ -174,23 +174,6 @@ static void _vdp_cap_dump_color(
     );
 }
 
-static void _vdp_cap_dump_point(
-    VdpPoint const * point
-)
-{
-    if (!point) {
-        fprintf(_vdp_cap_data.fp, "NULL");
-        return;
-    }
-
-    fprintf(
-        _vdp_cap_data.fp,
-        "{%u, %u}",
-        point->x,
-        point->y
-    );
-}
-
 static void _vdp_cap_dump_rect(
     VdpRect const * rect
 )
@@ -4608,11 +4591,9 @@ VdpStatus vdp_trace_device_create_x11(
     if (_vdp_cap_data.level >= LEVEL_PARAMS) {
         fprintf(
             _vdp_cap_data.fp,
-            "%p, %d, %s, %s",
+            "%p, %d, -, -",
             display,
-            screen,
-            device ? "-" : "NULL",
-            get_proc_address ? "-" : "NULL"
+            screen
         );
     }
     fputs(")\n", _vdp_cap_data.fp);

@@ -40,6 +40,17 @@ typedef void SetDllHandle(
     void * driver_dll_handle
 );
 
+static void * _vdp_backend_dll;
+static void * _vdp_trace_dll;
+static void * _vdp_driver_dll;
+static VdpDeviceCreateX11 * _vdp_imp_device_create_x11_proc;
+
+#if defined(__GNUC__)
+
+static void _vdp_close_driver(void) __attribute__((destructor));
+
+#endif
+
 #if DEBUG
 
 static void _vdp_wrapper_error_breakpoint(char const * file, int line, char const * function)
@@ -75,34 +86,30 @@ static char * _vdp_get_driver_name_from_dri2(
 
     if (!_vdp_DRI2QueryVersion(display, &major, &minor) ||
             (major < 1 || (major == 1 && minor < 2))) {
+        _vdp_DRI2RemoveExtension(display);
         return NULL;
     }
 
     if (!_vdp_DRI2Connect(display, root, &driver_name, &device_name)) {
+        _vdp_DRI2RemoveExtension(display);
         return NULL;
     }
 
     XFree(device_name);
+    _vdp_DRI2RemoveExtension(display);
 #endif /* DRI2 */
     return driver_name;
 }
 
-VdpStatus vdp_device_create_x11(
+static VdpStatus _vdp_open_driver(
     Display *             display,
-    int                   screen,
-    /* output parameters follow */
-    VdpDevice *           device,
-    VdpGetProcAddress * * get_proc_address
-)
+    int                   screen)
 {
     char const * vdpau_driver;
     char * vdpau_driver_dri2 = NULL;
     char         vdpau_driver_lib[PATH_MAX];
-    void *       backend_dll;
     char const * vdpau_trace;
     char const * func_name;
-
-    VdpDeviceCreateX11 * vdp_imp_device_create_x11;
 
     vdpau_driver = getenv("VDPAU_DRIVER");
     if (!vdpau_driver) {
@@ -125,13 +132,13 @@ VdpStatus vdp_device_create_x11(
         return VDP_STATUS_NO_IMPLEMENTATION;
     }
 
-    backend_dll = dlopen(vdpau_driver_lib, RTLD_NOW | RTLD_GLOBAL);
-    if (!backend_dll) {
+    _vdp_driver_dll = dlopen(vdpau_driver_lib, RTLD_NOW | RTLD_GLOBAL);
+    if (!_vdp_driver_dll) {
         /* Try again using the old path, which is guaranteed to fit in PATH_MAX
          * if the complete path fit above. */
         snprintf(vdpau_driver_lib, sizeof(vdpau_driver_lib), DRIVER_LIB_FORMAT,
                  "", vdpau_driver, "");
-        backend_dll = dlopen(vdpau_driver_lib, RTLD_NOW | RTLD_GLOBAL);
+        _vdp_driver_dll = dlopen(vdpau_driver_lib, RTLD_NOW | RTLD_GLOBAL);
     }
 
     if (vdpau_driver_dri2) {
@@ -139,26 +146,28 @@ VdpStatus vdp_device_create_x11(
         vdpau_driver_dri2 = NULL;
     }
 
-    if (!backend_dll) {
+    if (!_vdp_driver_dll) {
         fprintf(stderr, "Failed to open VDPAU backend %s\n", dlerror());
         _VDP_ERROR_BREAKPOINT();
         return VDP_STATUS_NO_IMPLEMENTATION;
     }
 
+    _vdp_backend_dll = _vdp_driver_dll;
+
     vdpau_trace = getenv("VDPAU_TRACE");
     if (vdpau_trace && atoi(vdpau_trace)) {
-        void *         trace_dll;
         SetDllHandle * set_dll_handle;
 
-        trace_dll = dlopen(VDPAU_MODULEDIR "/libvdpau_trace.so.1", RTLD_NOW | RTLD_GLOBAL);
-        if (!trace_dll) {
+        _vdp_trace_dll = dlopen(VDPAU_MODULEDIR "/libvdpau_trace.so.1",
+                                RTLD_NOW | RTLD_GLOBAL);
+        if (!_vdp_trace_dll) {
             fprintf(stderr, "Failed to open VDPAU trace library %s\n", dlerror());
             _VDP_ERROR_BREAKPOINT();
             return VDP_STATUS_NO_IMPLEMENTATION;
         }
 
         set_dll_handle = (SetDllHandle*)dlsym(
-            trace_dll,
+            _vdp_trace_dll,
             "vdp_trace_set_backend_handle"
         );
         if (!set_dll_handle) {
@@ -167,9 +176,9 @@ VdpStatus vdp_device_create_x11(
             return VDP_STATUS_NO_IMPLEMENTATION;
         }
 
-        set_dll_handle(backend_dll);
+        set_dll_handle(_vdp_backend_dll);
 
-        backend_dll = trace_dll;
+        _vdp_backend_dll = _vdp_trace_dll;
 
         func_name = "vdp_trace_device_create_x11";
     }
@@ -177,20 +186,222 @@ VdpStatus vdp_device_create_x11(
         func_name = "vdp_imp_device_create_x11";
     }
 
-    vdp_imp_device_create_x11 = (VdpDeviceCreateX11*)dlsym(
-        backend_dll,
+    _vdp_imp_device_create_x11_proc = (VdpDeviceCreateX11*)dlsym(
+        _vdp_backend_dll,
         func_name
     );
-    if (!vdp_imp_device_create_x11) {
+    if (!_vdp_imp_device_create_x11_proc) {
         fprintf(stderr, "%s\n", dlerror());
         _VDP_ERROR_BREAKPOINT();
         return VDP_STATUS_NO_IMPLEMENTATION;
     }
 
-    return vdp_imp_device_create_x11(
+    return VDP_STATUS_OK;
+}
+
+static void _vdp_close_driver(void)
+{
+    if (_vdp_driver_dll) {
+        dlclose(_vdp_driver_dll);
+        _vdp_driver_dll = NULL;
+    }
+    if (_vdp_trace_dll) {
+        dlclose(_vdp_trace_dll);
+        _vdp_trace_dll = NULL;
+    }
+    _vdp_backend_dll = NULL;
+    _vdp_imp_device_create_x11_proc = NULL;
+}
+
+static VdpGetProcAddress * _imp_get_proc_address;
+static VdpVideoSurfacePutBitsYCbCr * _imp_vid_put_bits_y_cb_cr;
+static VdpPresentationQueueSetBackgroundColor * _imp_pq_set_bg_color;
+static int _inited_fixes;
+static int _running_under_flash;
+static int _enable_flash_uv_swap = 1;
+static int _disable_flash_pq_bg_color = 1;
+
+static VdpStatus vid_put_bits_y_cb_cr_swapped(
+    VdpVideoSurface      surface,
+    VdpYCbCrFormat       source_ycbcr_format,
+    void const * const * source_data,
+    uint32_t const *     source_pitches
+)
+{
+    void const * data_reordered[3];
+    void const * const * data;
+
+    if (source_ycbcr_format == VDP_YCBCR_FORMAT_YV12) {
+        data_reordered[0] = source_data[0];
+        data_reordered[1] = source_data[2];
+        data_reordered[2] = source_data[1];
+        /*
+         * source_pitches[1] and source_pitches[2] should be equal,
+         * so no need to re-order.
+         */
+        data = data_reordered;
+    }
+    else {
+        data = source_data;
+    }
+
+    return _imp_vid_put_bits_y_cb_cr(
+        surface,
+        source_ycbcr_format,
+        data,
+        source_pitches
+    );
+}
+
+static VdpStatus pq_set_bg_color_noop(
+    VdpPresentationQueue presentation_queue,
+    VdpColor * const     background_color
+)
+{
+    return VDP_STATUS_OK;
+}
+
+static VdpStatus vdp_wrapper_get_proc_address(
+    VdpDevice device,
+    VdpFuncId function_id,
+    /* output parameters follow */
+    void * *  function_pointer
+)
+{
+    VdpStatus status;
+
+    status = _imp_get_proc_address(device, function_id, function_pointer);
+    if (status != VDP_STATUS_OK) {
+        return status;
+    }
+
+    if (_running_under_flash) {
+        switch (function_id) {
+        case VDP_FUNC_ID_VIDEO_SURFACE_PUT_BITS_Y_CB_CR:
+            if (_enable_flash_uv_swap) {
+                _imp_vid_put_bits_y_cb_cr = *function_pointer;
+                *function_pointer = vid_put_bits_y_cb_cr_swapped;
+            }
+            break;
+        case VDP_FUNC_ID_PRESENTATION_QUEUE_SET_BACKGROUND_COLOR:
+            if (_disable_flash_pq_bg_color) {
+                _imp_pq_set_bg_color = *function_pointer;
+                *function_pointer = pq_set_bg_color_noop;
+            }
+            break;
+        default:
+            break;
+        }
+    }
+
+    return VDP_STATUS_OK;
+}
+
+static void init_running_under_flash(void)
+{
+    FILE *fp;
+    char buffer[1024];
+    int ret, i;
+
+    fp = fopen("/proc/self/cmdline", "r");
+    if (!fp) {
+        return;
+    }
+    ret = fread(buffer, 1, sizeof(buffer) - 1, fp);
+    fclose(fp);
+    if (ret < 0) {
+        return;
+    }
+    /*
+     * Sometimes the file contains null between arguments. Wipe these out so
+     * strstr doesn't stop early.
+     */
+    for (i = 0; i < ret; i++) {
+        if (buffer[i] == '\0') {
+            buffer[i] = 'x';
+        }
+    }
+    buffer[ret] = '\0';
+
+    if (strstr(buffer, "libflashplayer") != NULL) {
+        _running_under_flash = 1;
+    }
+}
+
+static void init_config(void)
+{
+    FILE *fp;
+    char buffer[1024];
+
+    fp = fopen(VDPAU_SYSCONFDIR "/vdpau_wrapper.cfg", "r");
+    if (!fp) {
+        return;
+    }
+
+    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        char * equals = strchr(buffer, '=');
+        char * param;
+
+        if (equals == NULL) {
+            continue;
+        }
+
+        *equals = '\0';
+        param = equals + 1;
+
+        if (!strcmp(buffer, "enable_flash_uv_swap")) {
+            _enable_flash_uv_swap = atoi(param);
+        }
+        else if (!strcmp(buffer, "disable_flash_pq_bg_color")) {
+            _disable_flash_pq_bg_color = atoi(param);
+        }
+    }
+
+    fclose(fp);
+}
+
+static void init_fixes(void)
+{
+    if (_inited_fixes) {
+        return;
+    }
+    _inited_fixes = 1;
+
+    init_running_under_flash();
+    init_config();
+}
+
+VdpStatus vdp_device_create_x11(
+    Display *             display,
+    int                   screen,
+    /* output parameters follow */
+    VdpDevice *           device,
+    VdpGetProcAddress * * get_proc_address
+)
+{
+    VdpStatus status;
+
+    init_fixes();
+
+    if (!_vdp_imp_device_create_x11_proc) {
+        status = _vdp_open_driver(display, screen);
+        if (status != VDP_STATUS_OK) {
+            _vdp_close_driver();
+            return status;
+        }
+    }
+
+    status = _vdp_imp_device_create_x11_proc(
         display,
         screen,
         device,
-        get_proc_address
+        &_imp_get_proc_address
     );
+    if (status != VDP_STATUS_OK) {
+        return status;
+    }
+
+    *get_proc_address = vdp_wrapper_get_proc_address;
+
+    return VDP_STATUS_OK;
 }
