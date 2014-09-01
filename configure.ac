@@ -1,10 +1,10 @@
 AC_PREREQ(2.60)
 
-AC_INIT(libvdpau, 0.4.1, [xorg@lists.freedesktop.org], libvdpau)
+AC_INIT(libvdpau, 0.7, [vdpau@lists.freedesktop.org], libvdpau)
 AM_INIT_AUTOMAKE([dist-bzip2 foreign])
 AM_MAINTAINER_MODE
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 
 # Disable static libraries by default.  Use --enable-static if you really want
 # them.
@@ -81,5 +81,6 @@ XORG_CHANGELOG
 AC_OUTPUT([Makefile
            doc/Makefile
            src/Makefile
+           test/Makefile
            trace/Makefile
            vdpau.pc])

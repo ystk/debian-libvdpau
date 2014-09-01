@@ -1,3 +1,63 @@
+libvdpau (0.7-2) unstable; urgency=medium
+
+  * Remove Andres Mejia from Uploaders. Thanks for your work on libvdpau!
+    (Closes: #743563)
+  * Bump Standards-Version to 3.9.5. No changes needed.
+  * Cherry-pick upstream commit:
+    - [186195b] 0001-Fix-incorrect-VdpPictureInfo-typedef.patch
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 21 Apr 2014 23:08:42 +0200
+
+libvdpau (0.7-1) unstable; urgency=low
+
+  * New upstream release.
+  * Add README.source describing the import of a new upstream release.
+
+ -- Andreas Beckmann <anbe@debian.org>  Thu, 15 Aug 2013 00:59:45 +0200
+
+libvdpau (0.6-2) unstable; urgency=low
+
+  * Drop Conflicts/Replaces against obsolete squeeze packages.
+  * libvdpau1: Drop postinst, ancient cleanup code already in squeeze.
+  * Bump Standards-Version to 3.9.4. No changes needed.
+  * Use canonical Vcs-* URLs.
+  * Upload to unstable.
+
+ -- Andreas Beckmann <anbe@debian.org>  Mon, 06 May 2013 00:42:22 +0200
+
+libvdpau (0.6-1) experimental; urgency=low
+
+  * New upstream release.
+  * Drop patches cherry-picked from upstream git: 0001, 0002, 0003.
+
+ -- Andreas Beckmann <anbe@debian.org>  Tue, 12 Feb 2013 20:27:10 +0100
+
+libvdpau (0.5-1) experimental; urgency=low
+
+  * New upstream release.  (Closes: #689586)
+  * Drop patches that are now applied upstream: libvdpau_flashplayer.patch,
+    track_dynamic_library_handles_and_free_them_on_exit.patch.
+  * Update my email address and remove DMUA.
+  * Cherry-pick upstream commits:
+    - 0001-Make-use-of-dri2proto_CFLAGS-when-building.patch
+    - 0002-Change-mailing-list-to-vdpau-lists.freedesktop.org.patch
+    - 0003-Fix-leaked-extension-info-on-library-unload.patch (Closes: #592204)
+  * libvdpau1.symbols: Add _vdp_DRI2RemoveExtension, added in above patches.
+  * Change Upstream-Contact to vdpau@lists.freedesktop.org.
+  * Upload to experimental.
+
+ -- Andreas Beckmann <anbe@debian.org>  Fri, 25 Jan 2013 21:59:57 +0100
+
+libvdpau (0.4.1-8) unstable; urgency=low
+
+  * Update my email address and remove DMUA.
+  * Cherry-pick upstream commit 3b43955 from 0.5+git:
+    0003-Fix-leaked-extension-info-on-library-unload.patch  (Closes: #592204)
+  * libvdpau1.symbols: Add _vdp_DRI2RemoveExtension, added in above patch.
+  * Change Upstream-Contact to vdpau@lists.freedesktop.org.
+
+ -- Andreas Beckmann <anbe@debian.org>  Sun, 27 Jan 2013 01:49:23 +0100
+
 libvdpau (0.4.1-7) unstable; urgency=low
 
   * The last (and only) reverse dependency of lib32vdpau1 was the non-free
@@ -53,7 +113,7 @@ libvdpau (0.4.1-3) unstable; urgency=low
     (Closes: #616264)
   * track_dynamic_library_handles_and_free_them_on_exit.patch: Pick upstream
     commit 4262513e: "vdpau_wrapper.c: Track dynamic library handles and free
-    them on exit using __attribute__((destructor))".  This could fix #592204.
+    them on exit using __attribute__((destructor))".
   * Switch to debhelper 8.
   * Switch to dh-autoreconf: add to B-D, use dh --with autoreconf and drop
     autoreconf_-fi.patch.

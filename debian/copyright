@@ -1,6 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: VDPAU wrapper and trace libraries
-Upstream-Contact: Aaron Plattner <aplattner@nvidia.com>
+Upstream-Contact: <vdpau@lists.freedesktop.org>
 Source: http://people.freedesktop.org/~aplattner/vdpau/
 
 Files: *
@@ -10,7 +10,7 @@ License: Expat
 
 Files: debian/*
 Copyright: 2009-2012 Andres Mejia <mcitadel@gmail.com>
-           2010-2012 Andreas Beckmann <debian@abeckmann.de>
+           © 2010-2013 Andreas Beckmann <anbe@debian.org>
            2010 Russ Allbery <rra@debian.org>
 License: Expat
 

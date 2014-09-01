@@ -4,10 +4,8 @@ Priority: optional
 Maintainer: Debian NVIDIA Maintainers <pkg-nvidia-devel@lists.alioth.debian.org>
 Uploaders:
  Jean-Yves Avenard <jyavenard@gmail.com>,
- Andres Mejia <amejia@debian.org>,
  Russ Allbery <rra@debian.org>,
- Andreas Beckmann <debian@abeckmann.de>,
-DM-Upload-Allowed: yes
+ Andreas Beckmann <anbe@debian.org>,
 Build-Depends:
  debhelper (>= 9),
  dh-autoreconf,
@@ -19,10 +17,10 @@ Build-Depends-Indep:
  doxygen-latex,
  graphviz,
  ghostscript,
-Standards-Version: 3.9.3
+Standards-Version: 3.9.5
 Homepage: http://cgit.freedesktop.org/~aplattner/libvdpau
-Vcs-Git: git://git.debian.org/git/pkg-nvidia/libvdpau.git
-Vcs-Browser: http://git.debian.org/?p=pkg-nvidia/libvdpau.git
+Vcs-Git: git://anonscm.debian.org/pkg-nvidia/libvdpau.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-nvidia/libvdpau.git
 
 Package: libvdpau-dev
 Multi-Arch: same
@@ -32,8 +30,6 @@ Depends:
  libvdpau1 (= ${binary:Version}),
  libx11-dev,
  ${misc:Depends}
-Replaces: nvidia-libvdpau-dev
-Conflicts: nvidia-libvdpau-dev
 Suggests: libvdpau-doc
 Description: Video Decode and Presentation API for Unix (development files)
  VDPAU (Video Decode and Presentation API for Unix) is an open source
@@ -51,16 +47,8 @@ Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces:
- nvidia-libvdpau,
- nvidia-libvdpau1,
- nvidia-libvdpau-ia32,
- nvidia-libvdpau1-ia32,
  lib32vdpau1,
 Conflicts:
- nvidia-libvdpau,
- nvidia-libvdpau1,
- nvidia-libvdpau-ia32,
- nvidia-libvdpau1-ia32,
  lib32vdpau1,
 Suggests:
  nvidia-vdpau-driver [amd64 i386]
