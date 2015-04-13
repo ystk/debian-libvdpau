@@ -1,0 +1,56 @@
+From 6cb973e59d7b3fa50404d9d0ec30476ad1753bfd Mon Sep 17 00:00:00 2001
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Date: Sat, 19 Jul 2014 11:01:47 -0700
+Subject: [PATCH 2/2] vdpau: do not export _vdp_DRI2* functions
+
+Neither one is part of the public API, thus should never be used outside
+of the library itself.
+
+Add macro PRIVATE, that is used to annotate the function visibility by
+setting __attribute__((visibility("hidden"))).
+
+v2: Provide only PRIVATE macro. Requested by Aaron.
+
+Signed-off-by: Emil Velikov <emil.l.velikov@gmail.com>
+Reviewed-by: Aaron Plattner <aplattner@nvidia.com>
+Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+---
+ src/mesa_dri2.h | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/src/mesa_dri2.h b/src/mesa_dri2.h
+index 09bde8c..369b271 100644
+--- a/src/mesa_dri2.h
++++ b/src/mesa_dri2.h
+@@ -37,17 +37,24 @@
+ 
+ #include <X11/extensions/dri2tokens.h>
+ 
+-extern Bool
++#if (defined(__GNUC__) && __GNUC__ >= 4)
++  #define PRIVATE __attribute__ ((visibility("hidden")))
++#else
++  #define PRIVATE
++#endif
++
++
++PRIVATE extern Bool
+ _vdp_DRI2QueryExtension(Display * display, int *eventBase, int *errorBase);
+ 
+-extern Bool
++PRIVATE extern Bool
+ _vdp_DRI2QueryVersion(Display * display, int *major, int *minor);
+ 
+-extern Bool
++PRIVATE extern Bool
+ _vdp_DRI2Connect(Display * display, XID window, char **driverName,
+                  char **deviceName);
+ 
+-extern void
++PRIVATE extern void
+ _vdp_DRI2RemoveExtension(Display * display);
+ 
+ #endif
+-- 
+2.1.0
+

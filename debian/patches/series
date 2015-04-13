@@ -1,4 +1,6 @@
-0001-Fix-incorrect-VdpPictureInfo-typedef.patch
+0001-trace-properly-annotate-private-functions-as-static.patch
+0002-vdpau-do-not-export-_vdp_DRI2-functions.patch
 link-with-libx11.patch
 simplify-dlopen-path-length-error-handling.patch
 vdpau-module-searchpath.patch
+hardening.patch

@@ -1,3 +1,54 @@
+commit 6dd2fa1ffb567b5062293816deb2fc66723f2860
+Author: Aaron Plattner <aplattner@nvidia.com>
+Date:   Tue Jul 1 09:16:05 2014 -0700
+
+    Bump version to 0.8
+    
+    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+
+commit ee9491a1216f47e10cbb551391a01c7fcde940d2
+Author: Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Mon Mar 10 13:12:30 2014 -0700
+
+    Add VDPAU_DRIVER_PATH support
+    
+    Allow the user to specify the location of the backend driver,
+    via the VDPAU_DRIVER_PATH environment variable. This allows
+    easier testing of VDPAU backends without the need to rebuild
+    libvdpau.
+    
+    Inspired by LIBGL_DRIVERS_PATH from mesa.
+    
+    Signed-off-by: Emil Velikov <emil.l.velikov@gmail.com>
+    Acked-by: Stephen Warren <swarren@nvidia.com>
+    Reviewed-by: Aaron Plattner <aplattner@nvidia.com>
+    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+
+commit 186195b1a84f2517205522e7ab8e0f62ad61c329
+Author: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
+Date:   Tue Feb 18 14:48:16 2014 -0800
+
+    Fix incorrect VdpPictureInfo typedef.
+    
+    VdpPictureInfo should not be a pointer, otherwise the
+    VdpDecoderRender function signature asks for a pointer to a pointer.
+    But it really does expect a pointer directly to e.g. VdpPictureInfoH264.
+    
+    Signed-off-by: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
+    Tested-by: Reimar Döffinger <Reimar.Doeffinger@gmx.de>
+    Reviewed-by: Stephen Warren <swarren@nvidia.com>
+    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+
+commit 903d961a802ae65a9ecf014929a3ad3f50c6faf6
+Author: Emil Velikov <emil.l.velikov@gmail.com>
+Date:   Fri Jan 17 11:12:24 2014 -0800
+
+    trace: remove trailing whitespace
+    
+    Signed-off-by: Emil Velikov <emil.l.velikov@gmail.com>
+    Reviewed-by: Aaron Plattner <aplattner@nvidia.com>
+    Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+
 commit 7748591f9ba57483528972e36693536f27ce1f20
 Author: Aaron Plattner <aplattner@nvidia.com>
 Date:   Thu Aug 1 13:42:28 2013 -0700

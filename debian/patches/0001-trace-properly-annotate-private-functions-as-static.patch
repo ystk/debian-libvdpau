@@ -1,0 +1,56 @@
+From 9d27eb0a3947603c061607b94515e906d47c1b8a Mon Sep 17 00:00:00 2001
+From: Emil Velikov <emil.l.velikov@gmail.com>
+Date: Sat, 19 Jul 2014 08:22:37 -0700
+Subject: [PATCH 1/2] trace: properly annotate private functions as static
+
+The following three were never a part of the public API and as such
+should have never been exported by libvdpau_trace.so
+
+Correct that by marking them as static, thus allowing the compiler
+to hide them from the exported namespace.
+
+_vdp_cap_init_planes_adapt_surface_video
+_vdp_cap_init_planes_adapt_surface_bitmap
+_vdp_cap_init_planes_adapt_surface_output
+
+Signed-off-by: Emil Velikov <emil.l.velikov@gmail.com>
+Reviewed-by: Aaron Plattner <aplattner@nvidia.com>
+Signed-off-by: Aaron Plattner <aplattner@nvidia.com>
+---
+ trace/vdpau_trace.cpp | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/trace/vdpau_trace.cpp b/trace/vdpau_trace.cpp
+index cc92def..31c988a 100644
+--- a/trace/vdpau_trace.cpp
++++ b/trace/vdpau_trace.cpp
+@@ -849,7 +849,7 @@ static bool _vdp_cap_init_planes_adapt_format_bits_indexed(
+     );
+ }
+ 
+-bool _vdp_cap_init_planes_adapt_surface_video(
++static bool _vdp_cap_init_planes_adapt_surface_video(
+     uint32_t   surface,
+     uint32_t * surface_format,
+     uint32_t * width,
+@@ -874,7 +874,7 @@ bool _vdp_cap_init_planes_adapt_surface_video(
+     return true;
+ }
+ 
+-bool _vdp_cap_init_planes_adapt_surface_output(
++static bool _vdp_cap_init_planes_adapt_surface_output(
+     uint32_t   surface,
+     uint32_t * surface_format,
+     uint32_t * width,
+@@ -899,7 +899,7 @@ bool _vdp_cap_init_planes_adapt_surface_output(
+     return true;
+ }
+ 
+-bool _vdp_cap_init_planes_adapt_surface_bitmap(
++static bool _vdp_cap_init_planes_adapt_surface_bitmap(
+     uint32_t   surface,
+     uint32_t * surface_format,
+     uint32_t * width,
+-- 
+2.1.0
+

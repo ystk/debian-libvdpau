@@ -1,0 +1,12 @@
+Author: Andreas Beckmann <anbe@debian.org>
+Description: enable hardening while building the tests, too
+
+--- a/test/Makefile.am
++++ b/test/Makefile.am
+@@ -1,5 +1,5 @@
+ AM_CPPFLAGS = -I$(top_srcdir)/include
+-CFLAGS = $(X11_CFLAGS)
++CFLAGS += $(X11_CFLAGS)
+ dlclose_LDADD = $(DLOPEN_LIBS) $(X11_LIBS)
+ 
+ TESTS = dlclose
