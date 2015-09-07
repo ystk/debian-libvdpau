@@ -1,3 +1,12 @@
+libvdpau (0.4.1-2+deb6u1) squeeze-lts; urgency=high
+
+  * Patch for CVE 2015-5198, 2015-5199, 2015-5200
+    - Use secure_getenv(3) to improve security
+      (CVE-2015-5198, CVE-2015-5199, CVE-2015-5200). Closes: #797895.
+  * Add myself and Vincent Cheng to Uploaders
+
+ -- Luca Boccassi <luca.boccassi@gmail.com>  Sat, 05 Sep 2015 01:41:37 +0100
+
 libvdpau (0.4.1-2) unstable; urgency=high
 
   * Provide an upload to unstable to fix build failure. (Closes: #603220)
