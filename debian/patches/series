@@ -4,3 +4,4 @@ link-with-libx11.patch
 simplify-dlopen-path-length-error-handling.patch
 vdpau-module-searchpath.patch
 hardening.patch
+0007-Use-secure_getenv-3-to-improve-security.patch

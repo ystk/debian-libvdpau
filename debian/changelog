@@ -1,3 +1,12 @@
+libvdpau (0.8-3+deb8u1) jessie-security; urgency=high
+
+  * Patch for CVE 2015-5198, 2015-5199, 2015-5200
+    - Use secure_getenv(3) to improve security
+      (CVE-2015-5198, CVE-2015-5199, CVE-2015-5200). Closes: #797895.
+  * Add myself to Uploaders
+
+ -- Luca Boccassi <luca.boccassi@gmail.com>  Fri, 04 Sep 2015 23:23:40 +0100
+
 libvdpau (0.8-3) unstable; urgency=medium
 
   * Add a bug-script to collect some driver information.
