@@ -1,3 +1,12 @@
+libvdpau (0.8-3+deb8u2) jessie-security; urgency=medium
+
+  * Cherry-pick upstream commit to fix crash with the DRI_PRIME environment
+    variable set on 64-bit systems, regression caused by switch to
+    secure_getenv(3).  (Closes: #802625)
+    - [1cda354] 0034-mesa_dri2-Add-missing-include-of-config.h-to-define.patch
+
+ -- Luca Boccassi <luca.boccassi@gmail.com>  Mon, 02 Nov 2015 14:09:16 +0100
+
 libvdpau (0.8-3+deb8u1) jessie-security; urgency=high
 
   * Patch for CVE 2015-5198, 2015-5199, 2015-5200

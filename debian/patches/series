@@ -5,3 +5,4 @@ simplify-dlopen-path-length-error-handling.patch
 vdpau-module-searchpath.patch
 hardening.patch
 0007-Use-secure_getenv-3-to-improve-security.patch
+0034-mesa_dri2-Add-missing-include-of-config.h-to-define.patch
