@@ -1,6 +1,6 @@
 /*
  * Copyright © 2008 Red Hat, Inc.
- * Copyright © 2010 NVIDIA Corporation
+ * Copyright © 2010-2015 NVIDIA Corporation
  *
  * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Soft-
@@ -30,6 +30,7 @@
  * Authors:
  *   Kristian Høgsberg (krh@redhat.com)
  *   Modified for VDPAU by Aaron Plattner (aplattner@nvidia.com)
+ *   and José Hiram Soltren (jsoltren@nvidia.com)
  */
 
 
@@ -39,10 +40,10 @@
 #include <X11/extensions/extutil.h>
 #include <X11/extensions/dri2proto.h>
 #include "mesa_dri2.h"
+#include "util.h"
 
 static char dri2ExtensionName[] = DRI2_NAME;
 static XExtensionInfo *dri2Info;
-static XEXT_GENERATE_CLOSE_DISPLAY (DRI2CloseDisplay, dri2Info)
 
 static /* const */ XExtensionHooks dri2ExtensionHooks = {
   NULL,                   /* create_gc */
@@ -51,7 +52,7 @@ static /* const */ XExtensionHooks dri2ExtensionHooks = {
   NULL,                   /* free_gc */
   NULL,                   /* create_font */
   NULL,                   /* free_font */
-  DRI2CloseDisplay,       /* close_display */
+  NULL,                   /* close_display */
   NULL,                   /* wire_to_event */
   NULL,                   /* event_to_wire */
   NULL,                   /* error */
@@ -73,6 +74,14 @@ _vdp_DRI2QueryExtension(Display * dpy, int *eventBase, int *errorBase)
       *eventBase = info->codes->first_event;
       *errorBase = info->codes->first_error;
       return True;
+   }
+
+   if (dri2Info) {
+      if (info) {
+         XextRemoveDisplay(dri2Info, dpy);
+      }
+      XextDestroyExtension(dri2Info);
+      dri2Info = NULL;
    }
 
    return False;
@@ -121,6 +130,20 @@ _vdp_DRI2Connect(Display * dpy, XID window, char **driverName, char **deviceName
    req->dri2ReqType = X_DRI2Connect;
    req->window = window;
    req->driverType = DRI2DriverVDPAU;
+#ifdef DRI2DriverPrimeShift
+   {
+      char *prime = secure_getenv("DRI_PRIME");
+      if (prime) {
+         unsigned int primeid;
+         errno = 0;
+         primeid = strtoul(prime, NULL, 0);
+         if (errno == 0)
+            req->driverType |=
+               ((primeid & DRI2DriverPrimeMask) << DRI2DriverPrimeShift);
+      }
+   }
+#endif
+
    if (!_XReply(dpy, (xReply *) & rep, 0, xFalse)) {
       UnlockDisplay(dpy);
       SyncHandle();
@@ -160,4 +183,12 @@ _vdp_DRI2Connect(Display * dpy, XID window, char **driverName, char **deviceName
    SyncHandle();
 
    return True;
+}
+
+void
+_vdp_DRI2RemoveExtension(Display * dpy)
+{
+   XextRemoveDisplay(dri2Info, dpy);
+   XextDestroyExtension(dri2Info);
+   dri2Info = NULL;
 }
